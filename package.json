@@ -1,0 +1,11 @@
+{
+	"name": "rest-x",
+	"version": "0.0.1",
+	"description": "REST API framework",
+	"main": "test.js",
+	"scripts": {
+		"test": "npm start"
+	},
+	"author": "Xavier Slatter",
+	"license": "MIT"
+}
