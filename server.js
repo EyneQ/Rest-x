@@ -2,6 +2,9 @@
 
 let http = require("http");
 let Router = require("./Router/router");
+let extendResponse = require("./response");
+
+extendResponse(http.ServerResponse);
 
 function Server() {
 
