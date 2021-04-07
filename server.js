@@ -22,14 +22,12 @@ Server.prototype.close = function(callback) {
     this.server.close(callback);
 }
 
-Server.prototype.attachRoute = function(method, path, handler) {
-    method = method.toUpperCase();
-    this.router.register(method, path, handler);
-}
-
 Server.prototype.request = function(request, response) {
+    console.log(request.url);
     let requestHandler =
-        this.router.routeRequest(request.method, request.url);
+        this.router._lookup(request.method, request.url.split("/"));
+
+    console.log(requestHandler);
 
     if (requestHandler !== undefined) {
         requestHandler(request, response);
