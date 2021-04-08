@@ -23,14 +23,11 @@ Server.prototype.close = function(callback) {
 }
 
 Server.prototype.request = function(request, response) {
-    console.log(request.url);
     let requestHandler =
         this.router._lookup(request.method, request.url.split("/"));
 
-    console.log(requestHandler);
-
     if (requestHandler !== undefined) {
-        requestHandler(request, response);
+        requestHandler.data(request, response);
     }
 }
 

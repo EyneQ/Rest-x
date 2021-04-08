@@ -28,44 +28,41 @@ Router.prototype.attachMethod = function(method) {
 
 Router.prototype._lookup = function(method, path, node) {
     path.shift();
+    let prefix = path[0];
     if (node === undefined) {
         node = this.root.children[method];
     }
-    if (!(path.length - 1)) {
-        if (node[path[0]]) {
-            return node[path[0]].data;
-        } else {
-            return undefined;
-        }
-    } else {
-        return this._lookup(method, path, node[path[0]].children);
+
+    if (path.length === 1) {
+        return node[prefix] || undefined;
     }
 
+    return this._lookup(
+        method, path, node[prefix].children
+    );
 }
 
 Router.prototype._register = function(path, data, node) {
     path.shift();
-    let prefix = path[0];
-
-    if (path.length) {
-
-        let handler = undefined;
-        if (path.length == 1) {
-            handler = data;
-        }
-
-        if (!node[prefix]) {
-            node[prefix] = new Node(handler);
-        } else if (handler) {
-            node[prefix].data = handler;
-        }
-
-        this._register(path, data, node[prefix].children);
+    if (!path.length) {
+        return;
     }
-}
 
-Router.prototype._remove = function(method, path, node) {
+    let prefix = path[0];
+    let handler = undefined;
+    if (path.length === 1) {
+        handler = data;
+    }
 
+    if (!node[prefix]) {
+        node[prefix] = new Node(handler);
+    } else if (handler) {
+        node[prefix].data = handler;
+    }
+
+    this._register(
+        path, data, node[prefix].children
+    );
 }
 
 module.exports = Router;
