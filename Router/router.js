@@ -1,15 +1,14 @@
 "use strict";
 
-let Route = require("./Route");
 let methods = require("../lib/http-methods");
 
-function Node(data) {
+function Route(data) {
     this.data = data;
     this.children = {};
 }
 
 function Router() {
-    this.root = new Node();
+    this.root = new Route();
     this._init();
 }
 
@@ -55,7 +54,7 @@ Router.prototype._register = function(path, data, node) {
     }
 
     if (!node[prefix]) {
-        node[prefix] = new Node(handler);
+        node[prefix] = new Route(handler);
     } else if (handler) {
         node[prefix].data = handler;
     }
