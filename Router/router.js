@@ -1,11 +1,7 @@
 "use strict";
 
+let Route = require("./Route");
 let methods = require("../lib/http-methods");
-
-function Route(data) {
-    this.data = data;
-    this.children = {};
-}
 
 function Router() {
     this.root = new Route();
@@ -32,12 +28,20 @@ Router.prototype._lookup = function(method, path, node) {
         node = this.root.children[method];
     }
 
+    let found = "";
+    for (let key in node) {
+        found = node[key]._match(prefix, key);
+        if (found) {
+            break;
+        }
+    }
+    
     if (path.length === 1) {
-        return node[prefix] || undefined;
+        return node[found] || undefined;
     }
 
     return this._lookup(
-        method, path, node[prefix].children
+        method, path, node[found].children
     );
 }
 
