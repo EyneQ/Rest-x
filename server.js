@@ -27,7 +27,7 @@ Server.prototype.request = function(request, response) {
         this.router._lookup(request.method, request.url.split("/"));
 
     if (requestHandler !== undefined) {
-        requestHandler.data(request, response);
+        requestHandler.handler(request, response);
     }
 }
 

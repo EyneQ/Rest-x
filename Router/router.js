@@ -17,7 +17,9 @@ Router.prototype._init = function() {
 Router.prototype.attachMethod = function(method) {
     this.root.children[method] = {};
     Router.prototype[method.toLowerCase()] = function(path, handler) {
-        this._register(path.split("/"), handler, this.root.children[method]);
+        this._register(
+            path.split('/'), handler, this.root.children[method]
+        );
     }
 }
 
@@ -30,8 +32,8 @@ Router.prototype._lookup = function(method, path, node) {
 
     let found = "";
     for (let key in node) {
-        found = node[key]._match(prefix, key);
-        if (found) {
+        found = node[key]._match(prefix, key, path.length > 1);
+        if (found != undefined) {
             break;
         }
     }
