@@ -3,8 +3,6 @@ function Route(data) {
     this.children = {};
 }
 
-
-
 Route.prototype._match = function(path, prefix, hasMore) {
     if (path === prefix) {
         return prefix;

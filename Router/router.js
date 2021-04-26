@@ -23,7 +23,7 @@ Router.prototype.attachMethod = function(method) {
     }
 }
 
-Router.prototype._lookup = function(method, path, node) {
+Router.prototype._lookup = function(method, path, params, node) {
     path.shift();
     let prefix = path[0];
     if (node === undefined) {
@@ -34,16 +34,20 @@ Router.prototype._lookup = function(method, path, node) {
     for (let key in node) {
         found = node[key]._match(prefix, key, path.length > 1);
         if (found != undefined) {
+            if (found.charCodeAt(0) == 58) {
+                params[`${found.substring(1)}`] = prefix;
+            }
             break;
         }
     }
     
     if (path.length === 1) {
+        node[found].params = params;
         return node[found] || undefined;
     }
 
     return this._lookup(
-        method, path, node[found].children
+        method, path, params, node[found].children
     );
 }
 

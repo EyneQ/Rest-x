@@ -3,8 +3,10 @@
 let http = require("http");
 let Router = require("./Router/router");
 let extendResponse = require("./response");
+let extendRequest = require("./request")
 
 extendResponse(http.ServerResponse);
+extendRequest(http.IncomingMessage);
 
 function Server() {
 
@@ -24,9 +26,10 @@ Server.prototype.close = function(callback) {
 
 Server.prototype.request = function(request, response) {
     let requestHandler =
-        this.router._lookup(request.method, request.url.split("/"));
+        this.router._lookup(request.method, request.url.split("/"), new Object());
 
     if (requestHandler !== undefined) {
+        request.setParams(requestHandler.params);
         requestHandler.handler(request, response);
     }
 }
