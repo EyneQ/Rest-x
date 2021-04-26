@@ -3,6 +3,8 @@ function Route(data) {
     this.children = {};
 }
 
+
+
 Route.prototype._match = function(path, prefix, hasMore) {
     if (path === prefix) {
         return prefix;
@@ -15,16 +17,13 @@ Route.prototype._match = function(path, prefix, hasMore) {
         }
     }
 
-    if (hasMore) {
-        if ((prefix[0] === ':' || prefix[0] === '*') && Object.keys(this.children).length > 0) {
+    if (prefix.charCodeAt(0) == 42 || prefix.charCodeAt(0) == 58) {
+        if (hasMore && Object.keys(this.children).length) {
             return prefix;
-        }
-    } else {
-        if ((prefix[0] === ':' || prefix[0] === '*') && !Object.keys(this.children).length) {
+        } else if (!hasMore) {
             return prefix;
         }
     }
-
 
     return undefined;
 }
