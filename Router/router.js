@@ -1,77 +1,61 @@
 "use strict";
 
-let Route = require("./Route");
+const F_SLASH = '/';
 let methods = require("../lib/http-methods");
 
-function Router() {
-    this.root = new Route();
-    this._init();
+function Route(prefix, data) {
+    this.handler = data;
+    this.children = {};
+    this.process(prefix);
 }
 
-Router.prototype._init = function() {
-    for (let i = 0; i < methods.length; i++) {
-        this.attachMethod(methods[i]);
-    }
-}
-
-Router.prototype.attachMethod = function(method) {
-    this.root.children[method] = {};
-    Router.prototype[method.toLowerCase()] = function(path, handler) {
-        this._register(
-            path.split('/'), handler, this.root.children[method]
-        );
-    }
-}
-
-Router.prototype._lookup = function(method, path, params, node) {
-    path.shift();
-    let prefix = path[0];
-    if (node === undefined) {
-        node = this.root.children[method];
-    }
-
-    let found = "";
-    for (let key in node) {
-        found = node[key]._match(prefix, key, path.length > 1);
-        if (found != undefined) {
-            if (found.charCodeAt(0) == 58) {
-                params[`${found.substring(1)}`] = prefix;
-            }
-            break;
+Route.prototype.process = function(prefix) {
+    if (prefix) {
+        if (prefix.charCodeAt(0) == 58 || prefix.charCodeAt(0) == 42) {
+            this.dynamic = true;
+            return;
+        }
+    
+        if (prefix instanceof RegExp) {
+            this.regexp = new RegExp(prefix.replace("*", ".*"), "g");
         }
     }
-    
-    if (path.length === 1) {
-        node[found].params = params;
-        return node[found] || undefined;
+}
+
+function Router() {
+    this.routes = new Route();
+    this.init();
+}
+
+Router.prototype.init = function() {
+    for (let i = 0; i < methods.length; i++) {
+        this.attach(methods[i].toLowerCase());
+    }
+}
+
+Router.prototype.attach = function(method) {
+    Router.prototype[method] = function(path, handler) {
+        this.register(method + path, handler, this.routes);
+    }
+}
+
+Router.prototype.register = function(path, handler, node, index) {
+    let nextIndex = path.indexOf(F_SLASH, index);
+    let prefix = path.substr(index, (nextIndex + 1 || path.length) - 1);
+    if (!node.children[prefix]) {
+        node.children[prefix] = new Route(prefix);
+        if (nextIndex == -1) {
+            node.children[prefix].handler = handler;
+            return;
+        }
     }
 
-    return this._lookup(
-        method, path, params, node[found].children
+    this.register(
+        path, handler, node.children[prefix], nextIndex + 1
     );
 }
 
-Router.prototype._register = function(path, data, node) {
-    path.shift();
-    if (!path.length) {
-        return;
-    }
-
-    let prefix = path[0];
-    let handler = undefined;
-    if (path.length === 1) {
-        handler = data;
-    }
-
-    if (!node[prefix]) {
-        node[prefix] = new Route(handler);
-    } else if (handler) {
-        node[prefix].data = handler;
-    }
-
-    this._register(
-        path, data, node[prefix].children
-    );
+Router.prototype.lookup = function(path, node, index) {
 }
 
 module.exports = Router;

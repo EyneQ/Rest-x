@@ -26,12 +26,12 @@ Server.prototype.close = function(callback) {
 
 Server.prototype.request = function(request, response) {
     let requestHandler =
-        this.router._lookup(request.method, request.url.split("/"), new Object());
+        this.router.lookup(request.method, request.url);
 
-    if (requestHandler !== undefined) {
+    /*if (requestHandler !== undefined) {
         request.setParams(requestHandler.params);
         requestHandler.handler(request, response);
-    }
+    }*/
 }
 
 module.exports = Server;

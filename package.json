@@ -4,7 +4,8 @@
 	"description": "REST API framework",
 	"main": "test.js",
 	"scripts": {
-		"test": "node test.js"
+		"test": "node test/test.js",
+		"perf": "node test/performance.js"
 	},
 	"author": "Xavier Slatter",
 	"license": "MIT"

@@ -9,13 +9,13 @@ function extend(ServerResponse) {
         return this;
     }
 
+    ServerResponse.prototype.send = function(data) {
+        return this.end(data);
+    }
+
     ServerResponse.prototype.json = function(json) {
         this.setHeader("Content-Type", "application/json");
         return this.send(JSON.stringify(json));
-    }
-
-    ServerResponse.prototype.send = function(data) {
-        return this.end(data);
     }
 
     ServerResponse.prototype.sendFile = function(path, callback) {
